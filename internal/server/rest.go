@@ -104,4 +104,9 @@ func NewHTTPServer(uri string) *http.Server {
 	r := mux.NewRouter()
 	r.HandleFunc("/", logStore.handleProduce).Methods("POST")
 	r.HandleFunc("/", logStore.handleConsume).Methods("GET")
+
+	return &http.Server{
+		Addr:    uri,
+		Handler: r,
+	}
 }
