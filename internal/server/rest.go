@@ -76,7 +76,26 @@ func (ls *LogStore) handleProduce(w http.ResponseWriter, r *http.Request) {
 // and constructs a ConsumeResponse containing the retrieved record.
 // Errors if the offset is not found (Not Found).
 func (ls *LogStore) handleConsume(w http.ResponseWriter, r *http.Request) {
-	// TODO: Implement handleConsume logic
+	offsetParam := r.URL.Query().Get("offset")
+	offset, err := strconv.Atoi(offsetParam)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+	req := ConsumeRequest{
+		Offset: Offset(offset),
+	}
+	record, err := ls.Log.Read(req.Offset)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	res := ConsumeResponse{
+		Record: record,
+	}
+	err = json.NewEncoder(w).Encode(res)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 // NewHTTPServer creates a new HTTP server with the specified URI and returns it.
