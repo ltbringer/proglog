@@ -91,3 +91,7 @@ func (i *index) Write(off uint32, pos uint64) error {
 	i.size += uint64(entWidth)
 	return nil
 }
+
+func (i *index) Name() string {
+	return i.file.Name()
+}
